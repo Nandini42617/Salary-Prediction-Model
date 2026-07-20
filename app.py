@@ -137,6 +137,9 @@ Panipat Institute of Engineering & Technology (PIET)
 - NumPy
 
 ---
+## 🔗 GitHub Repository
+https://github.com/Manya2507/Salary-Prediction-Model
+---
 
 ## Required Inputs
 
