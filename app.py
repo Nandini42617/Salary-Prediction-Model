@@ -5,112 +5,64 @@ import gradio as gr
 # ==========================================================
 # Load Trained Model
 # ==========================================================
-
 try:
     model = joblib.load("salary_prediction_model.pkl")
 except Exception as e:
-    print(e)
+    print("Error loading model:", e)
     model = None
-
 
 # ==========================================================
 # Prediction Function
 # ==========================================================
+def predict_salary(years_experience):
 
-def predict_salary(
-    age,
-    experience,
-    education,
-    job_title,
-):
+    # Empty value check
+    if years_experience is None or str(years_experience).strip() == "":
+        return "❌ Please enter Years of Experience."
 
-    if model is None:
-        return "❌ Model file not found."
-
+    # Numeric validation
     try:
-        age = int(age)
-        experience = float(experience)
+        years_experience = float(years_experience)
     except:
-        return "❌ Please enter valid numeric values."
+        return "❌ Please enter a valid numeric value."
 
-    if age < 18 or age > 70:
-        return "❌ Age should be between 18 and 70."
+    # Negative validation
+    if years_experience < 0:
+        return "❌ Years of Experience cannot be negative."
 
-    if experience < 0 or experience > 50:
-        return "❌ Years of Experience should be between 0 and 50."
+    # Maximum validation
+    if years_experience > 50:
+        return "❌ Please enter experience between 0 and 50 years."
 
-    # -----------------------------------------------------
-    # Feature Vector (22 Features)
-    # -----------------------------------------------------
-
-    features = [0] * 22
-
-    # Numerical Features
-    features[0] = age
-    features[1] = experience
-
-    # ---------------- Education ----------------
-
-    education_map = {
-        "Bachelor's": 2,
-        "Bachelor's Degree": 3,
-        "High School": 4,
-        "Master's": 5,
-        "Master's Degree": 6,
-        "PhD": 7,
-        "others": 8,
-        "phD": 9,
-    }
-
-    if education in education_map:
-        features[education_map[education]] = 1
-    else:
-        features[8] = 1
-
-    # ---------------- Job Title ----------------
-
-    job_map = {
-        "Back end Developer": 10,
-        "Data Analyst": 11,
-        "Data Scientist": 12,
-        "Full Stack Engineer": 13,
-        "Marketing Manager": 14,
-        "Product Manager": 15,
-        "Senior Project Engineer": 16,
-        "Senior Software Engineer": 17,
-        "Software Engineer": 18,
-        "Software Engineer Manager": 19,
-        "Others": 20,
-    }
-
-    if job_title in job_map:
-        features[job_map[job_title]] = 1
-    else:
-        features[20] = 1
+    # Model check
+    if model is None:
+        return "❌ Model not found."
 
     try:
-        prediction = model.predict([features])[0]
+        prediction = model.predict([[years_experience]])
+
+        salary = prediction[0]
 
         return f"""
-## 💰 Salary Prediction
+✅ Salary Prediction Successful
 
-### Predicted Salary
+Years of Experience : {years_experience:.1f}
 
-₹ {prediction:,.2f} per year
+Predicted Salary
+
+₹ {salary:,.2f}
 """
 
     except Exception as e:
-        return f"Prediction Error\n\n{e}"
-
+        return f"Prediction Failed\n\n{e}"
 
 # ==========================================================
 # Description
 # ==========================================================
-
 DESCRIPTION = """
-# 💰 Salary Prediction System
+# 💰 Salary Prediction using Linear Regression
 
-Predict employee salary using Machine Learning.
+This application predicts the salary based on the employee's Years of Experience using a trained Linear Regression Machine Learning model.
 
 ---
 
@@ -126,69 +78,43 @@ Panipat Institute of Engineering & Technology (PIET)
 
 ---
 
-## Technologies
+## 🛠 Technologies Used
 
 - Python
 - Machine Learning
+- Linear Regression
 - Scikit-Learn
-- Gradio
-- Joblib
 - Pandas
 - NumPy
+- Joblib
+- Gradio
 
 ---
-## 🔗 GitHub Repository
-https://github.com/Manya2507/Salary-Prediction-Model
----
 
-## Required Inputs
+## Input
 
-- Age
 - Years of Experience
-- Education Level
-- Job Title
+
+---
+
+## Output
+
+- Predicted Salary
 """
 
 # ==========================================================
-# Interface
+# Gradio Interface
 # ==========================================================
-
-demo = gr.Interface(
+interface = gr.Interface(
     fn=predict_salary,
-    inputs=[
-        gr.Number(label="Age"),
-        gr.Number(label="Years of Experience"),
-        gr.Dropdown(
-            choices=[
-                "Bachelor's",
-                "Bachelor's Degree",
-                "High School",
-                "Master's",
-                "Master's Degree",
-                "PhD",
-                "phD",
-                "others",
-            ],
-            label="Education Level",
-        ),
-        gr.Dropdown(
-            choices=[
-                "Back end Developer",
-                "Data Analyst",
-                "Data Scientist",
-                "Full Stack Engineer",
-                "Marketing Manager",
-                "Product Manager",
-                "Senior Project Engineer",
-                "Senior Software Engineer",
-                "Software Engineer",
-                "Software Engineer Manager",
-                "Others",
-            ],
-            label="Job Title",
-        ),
-    ],
-    outputs=gr.Markdown(),
+    inputs=gr.Number(
+        label="Years of Experience",
+        value=2
+    ),
+    outputs=gr.Textbox(
+        label="Predicted Salary",
+        lines=8
+    ),
     title="💰 Salary Prediction System",
     description=DESCRIPTION,
 )
@@ -196,9 +122,8 @@ demo = gr.Interface(
 # ==========================================================
 # Launch
 # ==========================================================
-
 if __name__ == "__main__":
-    demo.launch(
+    interface.launch(
         server_name="0.0.0.0",
-        server_port=int(os.environ.get("PORT", 7860)),
+        server_port=int(os.environ.get("PORT", 7860))
     )
