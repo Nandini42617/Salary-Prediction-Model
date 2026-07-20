@@ -5,38 +5,36 @@ import gradio as gr
 # ==========================================================
 # Load Trained Model
 # ==========================================================
+
 try:
     model = joblib.load("salary_prediction_model.pkl")
+    print("Model loaded successfully.")
 except Exception as e:
-    print("Error loading model:", e)
+    print(f"Error loading model: {e}")
     model = None
 
 # ==========================================================
 # Prediction Function
 # ==========================================================
+
 def predict_salary(years_experience):
 
-    # Empty value check
-    if years_experience is None or str(years_experience).strip() == "":
+    if years_experience is None:
         return "❌ Please enter Years of Experience."
 
-    # Numeric validation
     try:
         years_experience = float(years_experience)
-    except:
+    except ValueError:
         return "❌ Please enter a valid numeric value."
 
-    # Negative validation
     if years_experience < 0:
         return "❌ Years of Experience cannot be negative."
 
-    # Maximum validation
     if years_experience > 50:
-        return "❌ Please enter experience between 0 and 50 years."
+        return "❌ Please enter a value between 0 and 50."
 
-    # Model check
     if model is None:
-        return "❌ Model not found."
+        return "❌ Model file not found."
 
     try:
         prediction = model.predict([[years_experience]])
@@ -44,9 +42,9 @@ def predict_salary(years_experience):
         salary = prediction[0]
 
         return f"""
-✅ Salary Prediction Successful
+✅ Salary Prediction Completed
 
-Years of Experience : {years_experience:.1f}
+Years of Experience : {years_experience:.1f} Years
 
 Predicted Salary
 
@@ -54,76 +52,110 @@ Predicted Salary
 """
 
     except Exception as e:
-        return f"Prediction Failed\n\n{e}"
+        return f"Prediction Error\n\n{e}"
 
 # ==========================================================
 # Description
 # ==========================================================
-DESCRIPTION = """
-# 💰 Salary Prediction using Linear Regression
 
-This application predicts the salary based on the employee's Years of Experience using a trained Linear Regression Machine Learning model.
+DESCRIPTION = """
+# 💰 Salary Prediction System
+
+This application predicts the **Salary** of an employee based on the **Years of Experience** using a trained **Linear Regression Machine Learning Model**.
 
 ---
 
 ## 👩‍💻 Developed By
 
-**Manya**
+**Manya Singla**
 
 ---
 
 ## 🏫 College
 
-Panipat Institute of Engineering & Technology (PIET)
+**Panipat Institute of Engineering & Technology (PIET), Panipat**
+
+---
+
+## 🎓 Project
+
+**Salary Prediction using Machine Learning**
+
+---
+
+## 🔗 GitHub Repository
+
+https://github.com/Manya2507/Salary-Prediction-Model
 
 ---
 
 ## 🛠 Technologies Used
 
-- Python
-- Machine Learning
-- Linear Regression
-- Scikit-Learn
-- Pandas
-- NumPy
-- Joblib
-- Gradio
+• Python
+
+• Machine Learning
+
+• Linear Regression
+
+• Scikit-learn
+
+• Pandas
+
+• NumPy
+
+• Joblib
+
+• Gradio
+
+• Git & GitHub
 
 ---
 
-## Input
+## 📋 Instructions
 
-- Years of Experience
+1. Enter Years of Experience.
+
+2. Click Submit.
+
+3. The model predicts the estimated salary.
 
 ---
 
-## Output
+## 📌 Input
 
-- Predicted Salary
+• Years of Experience
+
+---
+
+## 📈 Output
+
+• Predicted Salary
 """
 
 # ==========================================================
-# Gradio Interface
+# Interface
 # ==========================================================
-interface = gr.Interface(
+
+demo = gr.Interface(
     fn=predict_salary,
     inputs=gr.Number(
         label="Years of Experience",
-        value=2
+        precision=1
     ),
     outputs=gr.Textbox(
-        label="Predicted Salary",
+        label="Prediction Result",
         lines=8
     ),
-    title="💰 Salary Prediction System",
-    description=DESCRIPTION,
+    title="💰 Salary Prediction using Linear Regression",
+    description=DESCRIPTION
 )
 
 # ==========================================================
 # Launch
 # ==========================================================
+
 if __name__ == "__main__":
-    interface.launch(
+    demo.launch(
         server_name="0.0.0.0",
         server_port=int(os.environ.get("PORT", 7860))
     )
