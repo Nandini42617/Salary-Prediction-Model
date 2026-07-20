@@ -1,161 +1,220 @@
 import os
 import joblib
+import pandas as pd
 import gradio as gr
 
-# ==========================================================
+# =====================================
 # Load Trained Model
-# ==========================================================
+# =====================================
+model = joblib.load("salary_prediction_model.pkl")
 
-try:
-    model = joblib.load("salary_prediction_model.pkl")
-    print("Model loaded successfully.")
-except Exception as e:
-    print(f"Error loading model: {e}")
-    model = None
+# =====================================
+# Categories used while training
+# =====================================
 
-# ==========================================================
+education_categories = [
+    "Bachelor's",
+    "Bachelor's Degree",
+    "High School",
+    "Master's",
+    "Master's Degree",
+    "PhD",
+    "phD",
+    "others"
+]
+
+job_categories = [
+    "Back end Developer",
+    "Data Analyst",
+    "Data Scientist",
+    "Full Stack Engineer",
+    "Marketing Manager",
+    "Product Manager",
+    "Senior Project Engineer",
+    "Senior Software Engineer",
+    "Software Engineer",
+    "Software Engineer Manager",
+    "others"
+]
+
+# =====================================
 # Prediction Function
-# ==========================================================
+# =====================================
 
-def predict_salary(years_experience):
+def predict_salary(age, experience, education, job):
 
-    if years_experience is None:
-        return "❌ Please enter Years of Experience."
+    data = {
+        "Age": age,
+        "Years of Experience": experience,
 
-    try:
-        years_experience = float(years_experience)
-    except ValueError:
-        return "❌ Please enter a valid numeric value."
+        "Education Level_Bachelor's": 0,
+        "Education Level_Bachelor's Degree": 0,
+        "Education Level_High School": 0,
+        "Education Level_Master's": 0,
+        "Education Level_Master's Degree": 0,
+        "Education Level_PhD": 0,
+        "Education Level_others": 0,
+        "Education Level_phD": 0,
 
-    if years_experience < 0:
-        return "❌ Years of Experience cannot be negative."
+        "Job Title_Back end Developer": 0,
+        "Job Title_Data Analyst": 0,
+        "Job Title_Data Scientist": 0,
+        "Job Title_Full Stack Engineer": 0,
+        "Job Title_Marketing Manager": 0,
+        "Job Title_Product Manager": 0,
+        "Job Title_Senior Project Engineer": 0,
+        "Job Title_Senior Software Engineer": 0,
+        "Job Title_Software Engineer": 0,
+        "Job Title_Software Engineer Manager": 0,
+        "Job Title_others": 0
+    }
 
-    if years_experience > 50:
-        return "❌ Please enter a value between 0 and 50."
+    # Education Encoding
+    if education == "Bachelor's":
+        data["Education Level_Bachelor's"] = 1
+    elif education == "Bachelor's Degree":
+        data["Education Level_Bachelor's Degree"] = 1
+    elif education == "High School":
+        data["Education Level_High School"] = 1
+    elif education == "Master's":
+        data["Education Level_Master's"] = 1
+    elif education == "Master's Degree":
+        data["Education Level_Master's Degree"] = 1
+    elif education == "PhD":
+        data["Education Level_PhD"] = 1
+    elif education == "phD":
+        data["Education Level_phD"] = 1
+    else:
+        data["Education Level_others"] = 1
 
-    if model is None:
-        return "❌ Model file not found."
+    # Job Encoding
+    if job == "Back end Developer":
+        data["Job Title_Back end Developer"] = 1
+    elif job == "Data Analyst":
+        data["Job Title_Data Analyst"] = 1
+    elif job == "Data Scientist":
+        data["Job Title_Data Scientist"] = 1
+    elif job == "Full Stack Engineer":
+        data["Job Title_Full Stack Engineer"] = 1
+    elif job == "Marketing Manager":
+        data["Job Title_Marketing Manager"] = 1
+    elif job == "Product Manager":
+        data["Job Title_Product Manager"] = 1
+    elif job == "Senior Project Engineer":
+        data["Job Title_Senior Project Engineer"] = 1
+    elif job == "Senior Software Engineer":
+        data["Job Title_Senior Software Engineer"] = 1
+    elif job == "Software Engineer":
+        data["Job Title_Software Engineer"] = 1
+    elif job == "Software Engineer Manager":
+        data["Job Title_Software Engineer Manager"] = 1
+    else:
+        data["Job Title_others"] = 1
 
-    try:
-        prediction = model.predict([[years_experience]])
+    df = pd.DataFrame([data])
 
-        salary = prediction[0]
+    prediction = model.predict(df)[0]
 
-        return f"""
-✅ Salary Prediction Completed
+    return f"Predicted Salary: ₹ {prediction:,.0f}"
 
-Years of Experience : {years_experience:.1f} Years
+# =====================================
+# CSS
+# =====================================
 
-Predicted Salary
+css = """
+.gradio-container{
+background-image:url("https://images.unsplash.com/photo-1520607162513-77705c0f0d4a");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+}
 
-₹ {salary:,.2f}
+.glass{
+background:rgba(255,255,255,0.92);
+padding:20px;
+border-radius:15px;
+}
+
+.gr-button{
+background:#2563eb !important;
+color:white !important;
+}
 """
 
-    except Exception as e:
-        return f"Prediction Error\n\n{e}"
-
-# ==========================================================
-# Description
-# ==========================================================
-
-DESCRIPTION = """
-# 💰 Salary Prediction System
-
-This application predicts the **Salary** of an employee based on the **Years of Experience** using a trained **Linear Regression Machine Learning Model**.
-
----
-
-## 👩‍💻 Developed By
-
-**Manya Singla**
-
----
-
-## 🏫 College
-
-**Panipat Institute of Engineering & Technology (PIET), Panipat**
-
----
-
-## 🎓 Project
-
-**Salary Prediction using Machine Learning**
-
----
-
-## 🔗 GitHub Repository
-
-https://github.com/Manya2507/Salary-Prediction-Model
-
----
-
-## 🛠 Technologies Used
-
-• Python
-
-• Machine Learning
-
-• Linear Regression
-
-• Scikit-learn
-
-• Pandas
-
-• NumPy
-
-• Joblib
-
-• Gradio
-
-• Git & GitHub
-
----
-
-## 📋 Instructions
-
-1. Enter Years of Experience.
-
-2. Click Submit.
-
-3. The model predicts the estimated salary.
-
----
-
-## 📌 Input
-
-• Years of Experience
-
----
-
-## 📈 Output
-
-• Predicted Salary
-"""
-
-# ==========================================================
+# =====================================
 # Interface
-# ==========================================================
+# =====================================
 
-demo = gr.Interface(
-    fn=predict_salary,
-    inputs=gr.Number(
-        label="Years of Experience",
-        precision=1
-    ),
-    outputs=gr.Textbox(
-        label="Prediction Result",
-        lines=8
-    ),
-    title="💰 Salary Prediction using Linear Regression",
-    description=DESCRIPTION
-)
+with gr.Blocks(css=css,title="Salary Prediction System") as demo:
 
-# ==========================================================
+    with gr.Column(elem_classes="glass"):
+
+        gr.Markdown(
+        """
+# 💼 Salary Prediction System
+
+Predict employee salary using Machine Learning.
+        """
+        )
+
+        with gr.Row():
+
+            with gr.Column():
+
+                age = gr.Number(label="Age")
+
+                experience = gr.Number(label="Years of Experience")
+
+                education = gr.Dropdown(
+                    choices=education_categories,
+                    value="Bachelor's",
+                    label="Education Level"
+                )
+
+                job = gr.Dropdown(
+                    choices=job_categories,
+                    value="Software Engineer",
+                    label="Job Title"
+                )
+
+                predict = gr.Button("Predict Salary")
+
+                output = gr.Textbox(label="Prediction")
+
+            with gr.Column():
+
+                gr.Markdown("""
+## 👩‍💻 Developer
+
+**Name:** Manya Singla
+
+**College:** Panipat Institute of Engineering and Technology
+
+**Project:** AI Based Salary Prediction System
+
+**Machine Learning Model:** Linear Regression
+
+### Tools Used
+
+- Python
+- Gradio
+- Scikit-Learn
+- Pandas
+- Joblib
+                """)
+
+        predict.click(
+            predict_salary,
+            inputs=[age, experience, education, job],
+            outputs=output
+        )
+
+# =====================================
 # Launch
-# ==========================================================
+# =====================================
 
 if __name__ == "__main__":
     demo.launch(
         server_name="0.0.0.0",
-        server_port=int(os.environ.get("PORT", 7860))
+        server_port=int(os.environ.get("PORT",7860))
     )
