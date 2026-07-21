@@ -8,6 +8,7 @@ import pandas as pd
 # ============================================
 model = joblib.load("salary_prediction_model.pkl")
 
+
 # ============================================
 # Prediction Function
 # ============================================
@@ -36,7 +37,7 @@ def predict_salary(age, experience, education, job):
         "Job Title_Senior Software Engineer": 0,
         "Job Title_Software Engineer": 0,
         "Job Title_Software Engineer Manager": 0,
-        "Job Title_others": 0
+        "Job Title_others": 0,
     }
 
     # Education Encoding
@@ -81,45 +82,103 @@ def predict_salary(age, experience, education, job):
 # ============================================
 css = """
 .gradio-container{
-background-image:url("https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop");
-background-size:cover;
-background-position:center;
-background-attachment:fixed;
+    background-image:url("https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop");
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
 }
 
+/* Main Box */
 .box{
-background:rgba(255,255,255,.95);
-padding:20px;
-border-radius:15px;
-box-shadow:0 0 15px rgba(0,0,0,.3);
+    background:rgba(255,255,255,0.95);
+    padding:20px;
+    border-radius:18px;
+    box-shadow:0px 0px 20px rgba(0,0,0,0.3);
 }
 
+/* Make ALL text BLACK */
+.gradio-container,
+.gradio-container *{
+    color:black !important;
+}
+
+/* Markdown */
+.prose,
+.prose p,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose strong,
+.prose li{
+    color:black !important;
+}
+
+/* Labels */
+label{
+    color:black !important;
+    font-weight:bold !important;
+}
+
+/* Textbox */
+textarea,
+input{
+    color:black !important;
+    background:white !important;
+}
+
+/* Dropdown */
+select{
+    color:black !important;
+    background:white !important;
+}
+
+/* Output Textbox */
+textarea{
+    font-weight:bold;
+}
+
+/* Button */
+button{
+    color:white !important;
+    font-weight:bold !important;
+}
+
+/* Hide Footer */
 footer{
-visibility:hidden;
+    visibility:hidden;
 }
 """
+
 
 # ============================================
 # Interface
 # ============================================
 
-with gr.Blocks(css=css,title="Salary Prediction") as demo:
+with gr.Blocks(
+    css=css,
+    title="Salary Prediction"
+) as demo:
 
     with gr.Column(elem_classes="box"):
 
         gr.Markdown(
-        """
-        # 💼 Employee Salary Prediction
+            """
+# 💼 Employee Salary Prediction
 
-        Predict salary using Machine Learning.
-        """
+Predict the salary of an employee using a Machine Learning model.
+"""
         )
 
         with gr.Row():
 
+            # Left Side
             with gr.Column(scale=2):
 
-                age = gr.Number(label="Age", value=25)
+                age = gr.Number(
+                    label="Age",
+                    value=25
+                )
 
                 experience = gr.Number(
                     label="Years of Experience",
@@ -134,10 +193,10 @@ with gr.Blocks(css=css,title="Salary Prediction") as demo:
                         "Master's",
                         "Master's Degree",
                         "PhD",
-                        "Others"
+                        "Others",
                     ],
                     label="Education Level",
-                    value="Bachelor's"
+                    value="Bachelor's",
                 )
 
                 job = gr.Dropdown(
@@ -152,20 +211,28 @@ with gr.Blocks(css=css,title="Salary Prediction") as demo:
                         "Senior Software Engineer",
                         "Software Engineer",
                         "Software Engineer Manager",
-                        "Others"
+                        "Others",
                     ],
                     label="Job Title",
-                    value="Software Engineer"
+                    value="Software Engineer",
                 )
 
-                btn = gr.Button("Predict Salary",variant="primary")
+                btn = gr.Button(
+                    "Predict Salary",
+                    variant="primary"
+                )
 
-                output = gr.Textbox(label="Prediction")
+                output = gr.Textbox(
+                    label="Prediction",
+                    lines=2
+                )
 
+            # Right Side
             with gr.Column(scale=1):
 
-                gr.Markdown("""
-## 👩‍💻 Developer
+                gr.Markdown(
+                    """
+# 👩‍💻 Developer Details
 
 **Name:** Manya Singla
 
@@ -180,7 +247,7 @@ Salary Prediction using Linear Regression
 
 ---
 
-### Technology Used
+## 🛠 Technology Used
 
 - Python
 - Pandas
@@ -190,25 +257,32 @@ Salary Prediction using Linear Regression
 
 ---
 
-### Input Features
+## 📥 Input Features
 
 - Age
-- Experience
-- Education
+- Years of Experience
+- Education Level
 - Job Title
 
 ---
 
-### Output
+## 📤 Output
 
 Predicted Employee Salary
-""")
+"""
+                )
 
         btn.click(
-            predict_salary,
-            inputs=[age,experience,education,job],
-            outputs=output
+            fn=predict_salary,
+            inputs=[
+                age,
+                experience,
+                education,
+                job,
+            ],
+            outputs=output,
         )
+
 
 # ============================================
 # Launch
@@ -217,5 +291,5 @@ Predicted Employee Salary
 if __name__ == "__main__":
     demo.launch(
         server_name="0.0.0.0",
-        server_port=int(os.environ.get("PORT",7860))
+        server_port=int(os.environ.get("PORT", 7860))
     )
