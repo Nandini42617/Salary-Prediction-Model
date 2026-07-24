@@ -234,10 +234,10 @@ Predict the salary of an employee using a Machine Learning model.
                     """
 # 👩‍💻 Developer Details
 
-**Name:** Manya Singla
+**Name:** Nandini Goel 
 
 **College:**  
-Panipat Institute of Engineering and Technology
+Dr akhilesh das gupta institute of professional studies , New Delhi 
 
 ---
 
