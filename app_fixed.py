@@ -96,10 +96,44 @@ css = """
     box-shadow:0px 0px 20px rgba(0,0,0,0.3);
 }
 
-/* Make ALL text BLACK */
-.gradio-container,
-.gradio-container *{
-    color:white !important;
+
+/* Better mobile-safe colors */
+.gradio-container{
+    color:black;
+}
+
+.prose,
+.prose *,
+.markdown,
+.markdown *{
+    color:black !important;
+}
+
+label,
+label span{
+    color:black !important;
+    font-weight:bold !important;
+}
+
+input,
+textarea,
+select{
+    color:black !important;
+    -webkit-text-fill-color:black !important;
+    background:white !important;
+}
+
+input::placeholder,
+textarea::placeholder{
+    color:#666 !important;
+}
+
+button{
+    font-weight:bold !important;
+}
+
+footer{
+    display:none !important;
 }
 
 /* Markdown */
@@ -224,7 +258,8 @@ Predict the salary of an employee using a Machine Learning model.
 
                 output = gr.Textbox(
                     label="Prediction",
-                    lines=2
+                    lines=2,
+                    interactive=False
                 )
 
             # Right Side
