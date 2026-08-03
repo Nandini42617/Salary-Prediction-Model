@@ -88,56 +88,19 @@ css = """
     background-attachment:fixed;
 }
 
-/* Main Box */
+/* Main Card */
 .box{
-    background:rgba(255,255,255,0.95);
+    background:rgba(9,33,79,0.92);
     padding:20px;
     border-radius:18px;
-    box-shadow:0px 0px 20px rgba(0,0,0,0.3);
+    box-shadow:0px 0px 20px rgba(0,0,0,0.4);
 }
 
-
-/* Better mobile-safe colors */
-.gradio-container{
-    color:black;
-}
-
+/* Headings & Markdown */
 .prose,
 .prose *,
 .markdown,
-.markdown *{
-    color:white !important;
-}
-
-label,
-label span{
-    color:white !important;
-    font-weight:bold !important;
-}
-
-input,
-textarea,
-select{
-    color:white !important;
-    -webkit-text-fill-color:white !important;
-    background:white !important;
-}
-
-input::placeholder,
-textarea::placeholder{
-    color:#666 !important;
-}
-
-button{
-    font-weight:bold !important;
-}
-
-footer{
-    display:none !important;
-}
-
-/* Markdown */
-.prose,
+.markdown *,
 .prose p,
 .prose h1,
 .prose h2,
@@ -149,38 +112,42 @@ footer{
 }
 
 /* Labels */
-label{
+label,
+label span{
     color:white !important;
     font-weight:bold !important;
 }
 
-/* Textbox */
+/* Input Boxes */
+input,
 textarea,
-input{
-    color:white !important;
-    background:white !important;
-}
-
-/* Dropdown */
 select{
-    color:white !important;
     background:white !important;
+    color:black !important;
+    -webkit-text-fill-color:black !important;
+    border-radius:10px !important;
 }
 
-/* Output Textbox */
+/* Placeholder */
+input::placeholder,
+textarea::placeholder{
+    color:#666 !important;
+}
+
+/* Output Box */
 textarea{
     font-weight:bold;
 }
 
 /* Button */
 button{
-    color:white !important;
     font-weight:bold !important;
+    color:white !important;
 }
 
 /* Hide Footer */
 footer{
-    visibility:hidden;
+    display:none !important;
 }
 """
 
