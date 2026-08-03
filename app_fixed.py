@@ -106,20 +106,20 @@ css = """
 .prose *,
 .markdown,
 .markdown *{
-    color:black !important;
+    color:white !important;
 }
 
 label,
 label span{
-    color:black !important;
+    color:white !important;
     font-weight:bold !important;
 }
 
 input,
 textarea,
 select{
-    color:black !important;
-    -webkit-text-fill-color:black !important;
+    color:white !important;
+    -webkit-text-fill-color:white !important;
     background:white !important;
 }
 
@@ -145,25 +145,25 @@ footer{
 .prose h4,
 .prose strong,
 .prose li{
-    color:black !important;
+    color:white !important;
 }
 
 /* Labels */
 label{
-    color:black !important;
+    color:white !important;
     font-weight:bold !important;
 }
 
 /* Textbox */
 textarea,
 input{
-    color:black !important;
+    color:white !important;
     background:white !important;
 }
 
 /* Dropdown */
 select{
-    color:black !important;
+    color:white !important;
     background:white !important;
 }
 
